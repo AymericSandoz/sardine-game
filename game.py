@@ -26,12 +26,12 @@ class Game:
         p = n.getP()
         print("p*********", p)
         self.player = Player(
-            self.keylistener, self.screen, p.x, p.y, p.role, p.name)
+            self.keylistener, self.screen, p["x"], p["y"], p["role"], p["name"])
         self.map.add_player(self.player)
 
         # intéressant si je laisse juste players instances il y a u bonhomme en haut à gauche
         filtered_instances = [
-            player for player in player_instances if player.name != self.player.name]
+            player for player in player_instances if player["name"] != self.player.name]
         self.map.add_characters(filtered_instances)
         # self.map.add_characters(player_instances[0:(len(player_instances)-1)])
         clock = pygame.time.Clock()
@@ -40,11 +40,10 @@ class Game:
         while self.running:
             clock.tick(60)
             # Envoyez une requête pour obtenir la liste des joueurs du serveur
-            other_players = n.send(OtherPlayers(
-                self.player.position.x, self.player.position.y, self.player.direction, self.player.index_image, self.player.spritesheet_index, self.map.current_map.name, self.player.role, self.player.name))
+            other_players = n.send(self.player.to_dict(self.map.current_map.name))
             print("others_players", other_players)
             # Si tous les joeurs sont sur la map de base(donc qu'ils ont rejoins la partie et que le début du jeu n'a pas été lancé.
-            if all(player.current_map_name != "paradis" for player in other_players) and self.start_time is None:
+            if all(player['current_map_name'] != "paradis" for player in other_players) and self.start_time is None:
                 self.start_time = pygame.time.get_ticks()
             # Si le début du jeu a été lancé et que le temps écoulé est supérieur à 60 secondes
             if self.start_time is not None and (pygame.time.get_ticks() - self.start_time > 60000):
@@ -56,7 +55,7 @@ class Game:
                 self.switch_map_blocked = False
             # si le jeu n'a pas commencé alros je ne peux pas changer de map sauf si je suis le chat et je ne peux toucher eprsonne tant que personne n'a pas comméncé
             self.map.update(self.switch_map_blocked, self.game_start)
-            if all(player.role != "mouse" for player in other_players) and self.player.role != "mouse":
+            if all(player['role'] != "mouse" for player in other_players) and self.player.role != "mouse":
                 self.display_game_over()
                 if game_over_time is None:
                     game_over_time = pygame.time.get_ticks()  # Record the current time

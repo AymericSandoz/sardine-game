@@ -84,12 +84,11 @@ class Map:
 
     def add_characters(self, character_data):
         for data in character_data:
-            screen_x = (data.x -
+            screen_x = (data['x'] -
                         self.player.rect.width/2)
-            screen_y = (data.y -
+            screen_y = (data['y'] -
                         self.player.rect.height/2)
-            character = OtherPlayersVisualisation(
-                screen_x, screen_y,  data.direction, data.index_image, data.spritesheet_index, self.map_layer.zoom, self.current_map.name, data.role, data.name)
+            character = OtherPlayersVisualisation(screen_x, screen_y,  data['direction'], data['index_image'], data['spritesheet_index'], self.map_layer.zoom, self.current_map.name, data['role'], data['name'])
             self.character_sprites.add(character)
             self.all_sprites.add(character)
             self.group.add(character)
@@ -106,15 +105,15 @@ class Map:
 
     def move_characters(self, character_data):
         for character, data in zip(self.character_sprites, character_data):
-            character.rect.x = (data.x -
+            character.rect.x = (data['x'] -
                                 self.player.rect.width/2)
             character.rect.y = (
-                data.y - self.player.rect.height/2)
-            character.direction = data.direction
-            character.index_image = data.index_image
-            character.spritesheet_index = data.spritesheet_index
-            character.current_map_name = data.current_map_name
-            character.role = data.role
+                data['y'] - self.player.rect.height/2)
+            character.direction = data['direction']
+            character.index_image = data['index_image']
+            character.spritesheet_index = data['spritesheet_index']
+            character.current_map_name = data['current_map_name']
+            character.role = data['role']
 
     def update(self, switch_map_blocked=False, game_start=False) -> None:
         if self.player:

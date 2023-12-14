@@ -103,6 +103,18 @@ class Player(Entity):
         self.role = "ghost"
         # self.image.set_alpha(30)
 
+    def to_dict(self, current_map_name):
+        return {
+            'x': self.position.x,
+            'y': self.position.y,
+            'direction': self.direction,
+            'index_image': self.index_image,
+            'spritesheet_index': self.spritesheet_index,
+            'current_map_name': current_map_name,  # Use the argument here
+            'role': self.role,
+            'name': self.name
+        }
+
 
 class OtherPlayers():
     def __init__(self, x: int, y: int, direction: str, index_image: int = 0, spritesheet_index: str = "foot_red", current_map_name: str = "map_0", role: str = "mouse", name: str = "basile"):
@@ -118,6 +130,28 @@ class OtherPlayers():
     def __iter__(self):
         yield self.x
         yield self.y
+
+    def to_dict(self):
+        return {
+            'x': self.x,
+            'y': self.y,
+            'direction': self.direction,
+            'index_image': self.index_image,
+            'spritesheet_index': self.spritesheet_index,
+            'current_map_name': self.current_map_name,
+            'role': self.role,
+            'name': self.name
+        }
+
+    def from_dict(self, data):
+        self.x = data['x']
+        self.y = data['y']
+        self.direction = data['direction']
+        self.index_image = data['index_image']
+        self.spritesheet_index = data['spritesheet_index']
+        self.current_map_name = data['current_map_name']
+        self.role = data['role']
+        self.name = data['name']
 
 
 class OtherPlayersVisualisation(pygame.sprite.Sprite):
