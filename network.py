@@ -1,5 +1,6 @@
 import socket
 import pickle
+import json
 
 
 class Network:
@@ -18,22 +19,22 @@ class Network:
         try:
             self.client.connect(self.addr)
             print(f"Connected to server at {self.addr}")
-            return pickle.loads(self.client.recv(2048))
+            return json.loads(self.client.recv(2048))
         except Exception as e:
             print(f"Connection error: {e}")
 
     def send(self, data):
         try:
-            print("data", pickle.dumps(data))
-            bytes_sent = self.client.send(pickle.dumps(data))
+            data_string = json.dumps(data)
+            print("data", data_string)
+            bytes_sent = self.client.send(data_string.encode())  # Encode the string to bytes
             print(f"Bytes sent: {bytes_sent}")
             recv = self.client.recv(2048)
             print("recv", recv)
-            return pickle.loads(recv)
+            return json.loads(recv.decode())  # Decode the bytes to string
         except socket.error as e:
             print(f"Socket error: {e}, bytes sent: {bytes_sent}")
         except EOFError as e:
-            print(
-                f"EOF error: {e}. The connection may have been lost. bytes sent: {bytes_sent}")
+            print(f"EOFError: {e}")
         except Exception as e:
             print(f"General error: {e}")

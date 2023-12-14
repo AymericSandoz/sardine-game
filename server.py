@@ -28,29 +28,28 @@ def threaded_client(conn, player):
         print("v1")
         print(f"Sending player {player} to client :", players[player])
         print(f"Sending player {player} to client :",
-              pickle.dumps(players[player]))
-        conn.send(pickle.dumps(players[player]))
+              json.dumps(players[player]))
+        conn.send(json.dumps(players[player]).encode())  # Encode to bytes
         while True:
             print(f"true")
             print("Waiting for data...")
-            raw_data = conn.recv(2048)
+            raw_data = conn.recv(2048).decode()  # Decode from bytes
             print("Data received. Deserializing...", raw_data)
-            print("pickle.loads(raw_data) :", pickle.loads(raw_data))
-            data = pickle.loads(raw_data)
+            print("json.loads(raw_data) :", json.loads(raw_data))
+            data = json.loads(raw_data)
             print("Data deserialized.")
             print(f"Received data from player {player}: {data}")
             if not data:
                 break
             players[player] = data
             reply = players[:player] + players[player+1:]
-            print("pickle.dumps(reply) :", pickle.dumps(reply))
-            conn.sendall(pickle.dumps(reply))
+            print("json.dumps(reply) :", json.dumps(reply))
+            conn.sendall(json.dumps(reply).encode())  # Encode to bytes
     except Exception as e:
         print(f"Error handling client {player}: {e}")
     finally:
         print(f"Connection with player {player} closed")
         conn.close()
-
 
 currentPlayer = 0
 while True:
